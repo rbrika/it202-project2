@@ -7,7 +7,7 @@
     <link rel='manifest' href='./manifest.json'>
     <meta name="viewport" content="width=device-width,initial-scale=1">
 
-	<title>GRafeti Removal</title>
+	<title>Grafeti Removal</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
 	 crossorigin="anonymous">
 
@@ -15,7 +15,7 @@
     <meta name="viewport" content="width=device-width">
 	<style>
         .navbar{
-            background-color:blue;
+            background-color:grey;
         }
         .navbar-brand{
             color:black;
@@ -82,10 +82,14 @@
     <form id="filters">
       <input type="text" id="ward" placeholder="Enter ward">
       <br>
-      <input type="text" id="status" placeholder="Enter status">
-      <br>
+      <select id="status">
+  <option value="">Choose a value..</option>
+  <option value="Open">Open</option>
+  <option value="Completed">Completed</option>
+        </select>
+        <br>
     </form>
-      <button id="submitButton">Submit</button>
+      <button id="searchButton">Search</button>
   </div>
   <div class="content" id="list">
     <div id ="cardsList">  </div>
@@ -139,10 +143,11 @@
             $("#cardDets").append(p);
           }
       $(document).ready(function() {
+           var endpoint = "https://data.cityofchicago.org/resource/cdmx-wzbz.json";
           $("#home").show();
-         var db = new Dexie("friend_database");
+         var db = new Dexie("graffiti_database");
          db.version(1).stores({
-              notes: "++id,title,date,note"
+              notes: "++id,address,serviceRequest,location,surface,dateCreated,status,compleationDate"
          });
           
          function hideScreens() {
@@ -186,7 +191,18 @@
              }
          });
           
-         $("#createButton").on("click", function(){
+         $("#searchButton").on("click", function(){
+             var ward=$("#ward").val();
+             var status=$("#status").val();
+             console.log(ward);
+             console.log(status);
+             var url=endpoint;
+             if(ward!=""){
+                 url=url+"&ward="+ward;
+             }
+             if(status!=""){
+                 url=url+"&status="+status;
+             }
              db.notes.put({title: $("#title").val(), 
                            date: $("#date").val(),
                            note: $("#note").val()}) ;   
