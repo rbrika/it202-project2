@@ -14,6 +14,10 @@
      <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
 	<style>
+        #map {
+            height: 400px;  /* The height is 400 pixels */
+            width: 100%;  /* The width is the width of the web page */
+       }
         .navbar{
             background-color:grey;
         }
@@ -106,28 +110,14 @@
 	</div>
   </div>
   <div class="content" id="detailed">
-     <div id ="cardsDetailed">  </div>
-	<div id="cardDets" class="card detailedTemplate" style="width: auto;">
-		<div class="card-body">
-			<h5 class="card-title">Card title</h5>
-			<h6 class="card-date mb-2 text-muted">Card subtitle</h6>
-			<p class="card-note">Some quick example text to build on
-                the card title and make up the bulk of the card's content.</p>
-            <button id="replyButton" onclick="reply()">Reply</button>
-            <form id="responseForm" >
-                Subject:<br>
-                  <input type="text" id="response" placeholder="Response">
-            </form>
-            <!--<button id="submitButton" onclick="submit()">Submit</button>-->
-            <br><h5 id="responseHeader">Responses</h5>
-		</div>
-	</div> 
+    <div id="map"></div>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
       
 
     <script>
+
         function reply(){
               console.log("clicked reply");
              $("#responseForm").show();
@@ -149,9 +139,17 @@
           $("#home").show();
          var db = new Dexie("graffiti_database");
          db.version(1).stores({
-              grafeti: "++id,address,serviceRequest,location,surface,dateCreated,statusDB,compleationDate"
+              grafeti: "++id,address,serviceRequest,location,surface,dateCreated,statusDB,compleationDate,long,lat"
          });
-          
+          function createMarker(){
+              var chicago = {lat: 41.8781, lng: -87.6298};
+          var map = new google.maps.Map(
+          document.getElementById('map'), {zoom: 12, center: chicago});
+              db.grafeti.each(function(request){
+                  var location={lat:parseFloat(request.lat), lng:parseFloat(request.long)};
+                  var marker = new google.maps.Marker({position: location, map: map});
+              });
+          }
          function hideScreens() {
              $(".content").hide();
          }
@@ -171,19 +169,7 @@
                      $("#cardsList").append(clone);
                 });
          } 
-          function loadNotesDetailed(id){
-             $("#cardsDetailed").empty();
-                 db.notes.get(parseInt(id)).then(function(note){
-                     var clone = $(".detailedTemplate").clone();
-                     clone.find(".card-title").text(note.title);
-                     clone.find(".card-date").text(note.date); 
-                     clone.find(".card-note").text(note.note); 
-                     clone.removeClass("detailedTemplate");
-                     $("#cardsDetailed").append(clone);
-                     hideScreens();
-                     $("#detailed").show();
-                 });
-         } 
+
          $(".nav-link").on("click", function(){
              hideScreens();
              console.log("clicked on nav content");
@@ -193,7 +179,7 @@
                  loadNotesList();
              }
              else if(target=="#detailed"){
-                 
+                     createMarker();
              }
          });
           
@@ -218,7 +204,9 @@
                          surface: v.what_type_of_surface_is_the_graffiti_on_, 
                          dateCreated: v.creation_date,
                          statusDB: v.status,
-                         compleationDate: v.completion_date
+                         compleationDate: v.completion_date,
+                         long: v.longitude,
+                         lat:v.latitude
                                   }) ;
                  });   
              });
@@ -235,6 +223,9 @@
                    .then(function() { 
                           console.log("Service Worker Registered");                                     });
         }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCODaRYxz2gS1fniGC3JVDYQPh2ORVkXXU&callback=initMap">
     </script>
   </body>
 </html>
