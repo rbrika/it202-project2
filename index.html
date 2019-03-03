@@ -143,11 +143,11 @@
             $("#cardDets").append(p);
           }
       $(document).ready(function() {
-           var endpoint = "https://data.cityofchicago.org/resource/cdmx-wzbz.json";
+           var endpoint = "https://data.cityofchicago.org/resource/cdmx-wzbz.json?";
           $("#home").show();
          var db = new Dexie("graffiti_database");
          db.version(1).stores({
-              notes: "++id,address,serviceRequest,location,surface,dateCreated,status,compleationDate"
+              grafeti: "++id,address,serviceRequest,location,surface,dateCreated,statusDB,compleationDate"
          });
           
          function hideScreens() {
@@ -194,8 +194,8 @@
          $("#searchButton").on("click", function(){
              var ward=$("#ward").val();
              var status=$("#status").val();
-             console.log(ward);
-             console.log(status);
+             //console.log(ward);
+             //console.log(status);
              var url=endpoint;
              if(ward!=""){
                  url=url+"&ward="+ward;
@@ -203,12 +203,25 @@
              if(status!=""){
                  url=url+"&status="+status;
              }
-             db.notes.put({title: $("#title").val(), 
-                           date: $("#date").val(),
-                           note: $("#note").val()}) ;   
+             console.log(url);
+             $.get(url,function(response){
+                 var data = response;
+                 //console.log(response);
+                 $.each(data, function(i,v){
+                     console.log(v.what_type_of_surface_is_the_graffiti_on_);
+                     db.grafeti.put({
+                         address: v.street_address, 
+                         serviceRequest: v.service_request_number,
+                         location: v.where_is_the_graffiti_located_,
+                         surface: v.what_type_of_surface_is_the_graffiti_on_, 
+                         dateCreated: v.creation_date,
+                         statusDB: v.status,
+                         compleationDate: v.completion_date
+                                  }) ;
+                 });   
+             });
          });
-      
-          
+        
          $("body").on("click","#cardList",function(){
              loadNotesDetailed($(this).attr("data-id"));
          });
@@ -217,7 +230,8 @@
         if('serviceWorker' in navigator) {
           navigator.serviceWorker
                    .register('./sw.js')
-                   .then(function() { console.log("Service Worker Registered"); });
+                   .then(function() { 
+                          console.log("Service Worker Registered");                                     });
         }
     </script>
   </body>
