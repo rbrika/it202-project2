@@ -135,55 +135,22 @@
             $("#cardDets").append(p);
           }
       $(document).ready(function() {
-           var endpoint = "https://data.cityofchicago.org/resource/cdmx-wzbz.json?";
+           var endpoint = "https://data.cityofchicago.org/resource/cdmx-wzbz.json?$limit=25";
           $("#home").show();
-         var db = new Dexie("graffiti_database");
-         db.version(1).stores({
-              grafeti: "++id,address,serviceRequest,location,surface,dateCreated,statusDB,compleationDate,long,lat"
-         });
-          function createMarker(){
-              var chicago = {lat: 41.8781, lng: -87.6298};
-          var map = new google.maps.Map(
-          document.getElementById('map'), {zoom: 12, center: chicago});
-              db.grafeti.each(function(request){
-                  var location={lat:parseFloat(request.lat), lng:parseFloat(request.long)};
-                  var marker = new google.maps.Marker({position: location, map: map});
-              });
-          }
-         function hideScreens() {
-             $(".content").hide();
-         }
-         function loadNotesList(){
-             $("#cardsList").empty();
-                 db.grafeti.each(function(request){
-                     var clone = $(".listTemplate").clone();
-                     clone.find(".card-address").text(request.address);
-                     clone.find(".card-date").text(request.dateCreated); 
-                     clone.find(".card-request").text(request.serviceRequest); 
-                     clone.find(".card-location").text(request.location); 
-                     clone.find(".card-status").text(request.statusDB); 
-                     clone.find(".card-surface").text(request.surface); 
-                     clone.find(".card-dateComplete").text(request.compleationDate); 
-                     clone.attr("data-id",request.id);
-                     clone.removeClass("listTemplate");
-                     $("#cardsList").append(clone);
-                });
-         } 
-
          $(".nav-link").on("click", function(){
              hideScreens();
              console.log("clicked on nav content");
              var target = $(this).attr("href");
              $(target).show();
-             if(target=="#list"){
-                 loadNotesList();
-             }
-             else if(target=="#detailed"){
-                     createMarker();
-             }
          });
-          
+                   function hideScreens() {
+             $(".content").hide();
+         }
          $("#searchButton").on("click", function(){
+             $("#cardsList").empty();
+             $("#map").empty();
+             var chicago = {lat: 41.8781, lng: -87.6298};
+              var map = new google.maps.Map(document.getElementById('map'), {zoom: 12, center: chicago});
              var ward=$("#ward").val();
              var status=$("#status").val();
              var url=endpoint;
@@ -195,25 +162,36 @@
              }
              console.log(url);
              $.get(url,function(response){
+                 console.log(response.length);
+                 $("#home").append("<h2> Your search returned "+ response.length+"  records.</h2>");
                  var data = response;
                  $.each(data, function(i,v){
-                     db.grafeti.put({
-                         address: v.street_address, 
-                         serviceRequest: v.service_request_number,
-                         location: v.where_is_the_graffiti_located_,
-                         surface: v.what_type_of_surface_is_the_graffiti_on_, 
-                         dateCreated: v.creation_date,
-                         statusDB: v.status,
-                         compleationDate: v.completion_date,
-                         long: v.longitude,
-                         lat:v.latitude
-                                  }) ;
+                     console.log(v);
+                     var clone = $(".listTemplate").clone();
+                     clone.find(".card-address").text(v.street_address);
+                     clone.find(".card-date").text(v.creation_date); 
+                     clone.find(".card-request").text(v.service_request_number); 
+                     clone.find(".card-location").text(v.where_is_the_graffiti_located_); 
+                     clone.find(".card-status").text(v.status); 
+                     clone.find(".card-surface").text(v.what_type_of_surface_is_the_graffiti_on_); 
+                     clone.find(".card-dateComplete").text(v.completion_date); 
+                     clone.removeClass("listTemplate");
+                     $("#cardsList").append(clone);
+                     var location={lat:parseFloat(v.latitude), lng:parseFloat(v.longitude)};
+                     var  iconColor;
+                     if(v.status=="Open"){
+                         iconColor="grn-circle.png";
+                     }
+                     else{
+                         iconColor="red-circle.png";
+                     }
+                     var marker = new google.maps.Marker({
+                         position: location, 
+                         map: map,
+                         icon: iconColor
+                     });
                  });   
              });
-         });
-        
-         $("body").on("click","#cardList",function(){
-             loadNotesDetailed($(this).attr("data-id"));
          });
       });
         // register the service worker for offline use
@@ -225,7 +203,7 @@
         }
     </script>
     <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCODaRYxz2gS1fniGC3JVDYQPh2ORVkXXU&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyCODaRYxz2gS1fniGC3JVDYQPh2ORVkXXU&callback=initMap">
     </script>
   </body>
 </html>
