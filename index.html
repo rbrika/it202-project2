@@ -95,8 +95,13 @@
     <div id ="cardsList">  </div>
 	<div id="cardList"class="card listTemplate" style="width: auto;" data-id="">
 		<div class="card-bodyList">
-			<h5 class="card-title">Card title</h5>
-			<h6 class="card-date mb-2 text-muted">Card date</h6>
+			<h4 class="card-address">Card title</h4>
+			<h5 class="card-date mb-2 text-muted">Card date</h5>
+            <h6 class="card-request mb-2 text-muted">Card date</h6>
+            <h6 class="card-location mb-2 text-muted">Card date</h6>
+            <h6 class="card-surface mb-2 text-muted">Card date</h6>
+            <h6 class="card-status mb-2 text-muted">Card date</h6>
+            <h6 class="card-dateComplete mb-2 text-muted">Card date</h6>
 		</div>
 	</div>
   </div>
@@ -118,9 +123,6 @@
 		</div>
 	</div> 
   </div>
-    
-
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
       
@@ -155,12 +157,16 @@
          }
          function loadNotesList(){
              $("#cardsList").empty();
-                 db.notes.each(function(note){
+                 db.grafeti.each(function(request){
                      var clone = $(".listTemplate").clone();
-                     clone.find(".card-title").text(note.title);
-                     clone.find(".card-date").text(note.date); 
-                     clone.find(".card-date").text(note.date); 
-                     clone.attr("data-id",note.id);
+                     clone.find(".card-address").text(request.address);
+                     clone.find(".card-date").text(request.dateCreated); 
+                     clone.find(".card-request").text(request.serviceRequest); 
+                     clone.find(".card-location").text(request.location); 
+                     clone.find(".card-status").text(request.statusDB); 
+                     clone.find(".card-surface").text(request.surface); 
+                     clone.find(".card-dateComplete").text(request.compleationDate); 
+                     clone.attr("data-id",request.id);
                      clone.removeClass("listTemplate");
                      $("#cardsList").append(clone);
                 });
@@ -194,8 +200,6 @@
          $("#searchButton").on("click", function(){
              var ward=$("#ward").val();
              var status=$("#status").val();
-             //console.log(ward);
-             //console.log(status);
              var url=endpoint;
              if(ward!=""){
                  url=url+"&ward="+ward;
@@ -206,9 +210,7 @@
              console.log(url);
              $.get(url,function(response){
                  var data = response;
-                 //console.log(response);
                  $.each(data, function(i,v){
-                     console.log(v.what_type_of_surface_is_the_graffiti_on_);
                      db.grafeti.put({
                          address: v.street_address, 
                          serviceRequest: v.service_request_number,
