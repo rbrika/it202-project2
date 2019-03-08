@@ -120,31 +120,11 @@
 
     <script>
       $(document).ready(function() {
-          
-          var contentString = '<div id="content">'+
-            '<div id="siteNotice">'+
-            '</div>'+
-            '<h1 id="firstHeading" class="firstHeading">Uluru</h1>'+
-            '<div id="bodyContent">'+
-            '<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
-            'sandstone rock formation in the southern part of the '+
-            'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) '+
-            'south west of the nearest large town, Alice Springs; 450&#160;km '+
-            '(280&#160;mi) by road. Kata Tjuta and Uluru are the two major '+
-            'features of the Uluru - Kata Tjuta National Park. Uluru is '+
-            'sacred to the Pitjantjatjara and Yankunytjatjara, the '+
-            'Aboriginal people of the area. It has many springs, waterholes, '+
-            'rock caves and ancient paintings. Uluru is listed as a World '+
-            'Heritage Site.</p>'+
-            '<p>Attribution: Uluru, <a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">'+
-            'https://en.wikipedia.org/w/index.php?title=Uluru</a> '+
-            '(last visited June 22, 2009).</p>'+
-            '</div>'+
-            '</div>';
          var endpoint = "https://data.cityofchicago.org/resource/cdmx-wzbz.json?$limit=5";
+          
           var db = new Dexie("graffiti_database");
           db.version(1).stores({
-              graffiti: '++id,address,date,request,location,statusDB,surface,dateComplete'
+              graffiti: '++id,address,date,request,location,statusDB,surface,dateComplete,lat,long'
           });
             function loadCards(){
                 db.graffiti.each(function(v){
@@ -161,14 +141,47 @@
                      clone.attr("data-id",v.id);
                      clone.removeClass("listTemplate");
                      $("#cardsList").append(clone);
-                    if(v.status=="Open"){
+                   
+                });
+                                   
+          }
+          function addMarkers(){
+              var chicago = {lat: 41.8781, lng: -87.6298};
+              var map = new google.maps.Map(document.getElementById('map'), {zoom: 12, center: chicago});
+              db.graffiti.each(function(v){
+                  var infowindow = new google.maps.InfoWindow({
+                         content:
+                          '<div id="content">'+
+                              '<div id="siteNotice">'+
+                              '</div>'+
+                               '<h1 id="firstHeading" class="firstHeading">' 
+                                +v.address+ 
+                                '</h1>'+
+                                '<div id="bodyContent">'+
+                                '<p><b></b></p>'+
+                                '</div>'+
+                          '</div>'
+                  });
+                  var iconColor;
+                  var location = {lat: v.lat, lng: v.long};
+                  if(v.statusDB=="Open"){
                          iconColor="grn-circle.png";
                      }
                      else{
                          iconColor="red-circle.png";
                      }
-                });
-                                   
+                         var marker = new google.maps.Marker({
+                             position: location, 
+                             map: map,
+                             icon: iconColor
+                         });
+                         marker.set("id",v.id);
+                         marker.addListener('click', function() {
+                             var idM=marker.get("id");
+                             console.log("clicked on marker "+idM);
+                             infowindow.open(map, marker);
+                         });
+              });
           }
          $("#home").show();
          $(".nav-link").on("click", function(){
@@ -179,6 +192,9 @@
              if(target=="#list"){
                 loadCards();
                 }
+             if(target=="#detailed"){
+                 addMarkers();
+                }
          });
         
          function hideScreens() {
@@ -187,9 +203,7 @@
          $("#searchButton").on("click", function(){
              db.graffiti.clear();
              $("#cardsList").empty();
-             $("#map").empty();
-             var chicago = {lat: 41.8781, lng: -87.6298};
-              var map = new google.maps.Map(document.getElementById('map'), {zoom: 12, center: chicago});
+             $("#map").empty();  
              var ward=$("#ward").val();
              var status=$("#status").val();
              var url=endpoint;
@@ -204,50 +218,19 @@
                  console.log(response.length);
                  var data = response;
                  $.each(data, function(i,v){
-                     //console.log(v);
-                     db.graffiti.put({address:v.street_address,
-                                     date:v.creation_date,
-                                     request:v.service_request_number,
-                                     location:v.where_is_the_graffiti_located_,
-                                     statusDB:v.status,
-                                                 surface:v.what_type_of_surface_is_the_graffiti_on_,
-                                      dateComplete:v.completion_date});
-                     var location={lat:parseFloat(v.latitude),                                                         lng:parseFloat(v.longitude)};
-                     var  iconColor;
-                     var id;
-                     //console.log(db.graffiti.orderBy('id').last());
-                     db.graffiti.orderBy('id').last().then(function(result){
-                         result.id;
-                         var infowindow = new google.maps.InfoWindow({
-                             content: '<div id="content">'+
-                                        '<div id="siteNotice">'+
-                                        '</div>'+
-                                            '<h1 id="firstHeading"                                                               class="firstHeading">'                                                             +result.address+ 
-                                            '</h1>'+
-                                        '<div id="bodyContent">'+
-                                            '<p><b></b></p>'+
-                                        '</div>'+
-                                      '</div>'
-                         });
-                         var marker = new google.maps.Marker({
-                             position: location, 
-                             map: map,
-                             icon: iconColor
-                         });
-                         marker.set("id",result.id);
-                         marker.addListener('click', function() {
-                             var idM=marker.get("id");
-                             console.log("clicked on marker "+idM);
-                             infowindow.open(map, marker);
-                         });
-                     });
-                     
-                     
+                     db.graffiti.put({
+                         address:v.street_address,
+                         date:v.creation_date,
+                         request:v.service_request_number,
+                         location:v.where_is_the_graffiti_located_,
+                         statusDB:v.status,
+                         surface:v.what_type_of_surface_is_the_graffiti_on_,
+                         dateComplete:v.completion_date,
+                         lat:parseFloat(v.latitude),
+                         long:parseFloat(v.longitude)
+                     });                     
                  });   
              });
-         });
-          $("body").on("click","#cardList",function(){
-             markerInfoWindow($(this).attr("data-id"));
          });
       });
         // register the service worker for offline use
