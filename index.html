@@ -7,7 +7,7 @@
     <link rel='manifest' href='./manifest.json'>
     <meta name="viewport" content="width=device-width,initial-scale=1">
 
-	<title>Grafeti Removal</title>
+	<title>Graffiti Removal</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
 	 crossorigin="anonymous">
 
@@ -57,6 +57,8 @@
         #responseHeader{
            display: none; 
         }
+        .Completed {color:red;}
+        .Open {color: green;}
 	</style>
      <!-- Include Dexie -->
       <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
@@ -117,36 +119,73 @@
       
 
     <script>
-
-        function reply(){
-              console.log("clicked reply");
-             $("#responseForm").show();
-            $("#submitButton").show();
-          }
-        function submit(){
-              console.log("clicked submit");
-            $("#responseHeader").show();
-             $("#responseForm").hide();
-            $("#submitButton").hide();
-            var p = $("<p>");
-            p.attr('id','resp');
-            p.addClass("list-note");
-            p.text($("#response").val()); 
-            $("#cardDets").append(p);
-          }
       $(document).ready(function() {
-           var endpoint = "https://data.cityofchicago.org/resource/cdmx-wzbz.json?$limit=25";
-          $("#home").show();
+          
+          var contentString = '<div id="content">'+
+            '<div id="siteNotice">'+
+            '</div>'+
+            '<h1 id="firstHeading" class="firstHeading">Uluru</h1>'+
+            '<div id="bodyContent">'+
+            '<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
+            'sandstone rock formation in the southern part of the '+
+            'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) '+
+            'south west of the nearest large town, Alice Springs; 450&#160;km '+
+            '(280&#160;mi) by road. Kata Tjuta and Uluru are the two major '+
+            'features of the Uluru - Kata Tjuta National Park. Uluru is '+
+            'sacred to the Pitjantjatjara and Yankunytjatjara, the '+
+            'Aboriginal people of the area. It has many springs, waterholes, '+
+            'rock caves and ancient paintings. Uluru is listed as a World '+
+            'Heritage Site.</p>'+
+            '<p>Attribution: Uluru, <a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">'+
+            'https://en.wikipedia.org/w/index.php?title=Uluru</a> '+
+            '(last visited June 22, 2009).</p>'+
+            '</div>'+
+            '</div>';
+         var endpoint = "https://data.cityofchicago.org/resource/cdmx-wzbz.json?$limit=5";
+          var db = new Dexie("graffiti_database");
+          db.version(1).stores({
+              graffiti: '++id,address,date,request,location,statusDB,surface,dateComplete'
+          });
+            function loadCards(){
+                db.graffiti.each(function(v){
+                    var clone = $(".listTemplate").clone();
+                    console.log(v.street_address);
+                     clone.find(".card-address").text(v.address);
+                     clone.find(".card-address").addClass(v.statusDB);
+                     clone.find(".card-date").text(v.date); 
+                     clone.find(".card-request").text(v.request); 
+                     clone.find(".card-location").text(v.location); 
+                     clone.find(".card-status").text(v.statusDB); 
+                     clone.find(".card-surface").text(v.surface); 
+                     clone.find(".card-dateComplete").text(v.dateComplete);
+                     clone.attr("data-id",v.id);
+                     clone.removeClass("listTemplate");
+                     $("#cardsList").append(clone);
+                    if(v.status=="Open"){
+                         iconColor="grn-circle.png";
+                     }
+                     else{
+                         iconColor="red-circle.png";
+                     }
+                });
+                                   
+          }
+         $("#home").show();
          $(".nav-link").on("click", function(){
              hideScreens();
              console.log("clicked on nav content");
              var target = $(this).attr("href");
              $(target).show();
+             if(target=="#list"){
+                loadCards();
+                }
          });
-                   function hideScreens() {
+        
+         function hideScreens() {
              $(".content").hide();
          }
          $("#searchButton").on("click", function(){
+             db.graffiti.clear();
              $("#cardsList").empty();
              $("#map").empty();
              var chicago = {lat: 41.8781, lng: -87.6298};
@@ -163,35 +202,52 @@
              console.log(url);
              $.get(url,function(response){
                  console.log(response.length);
-                 $("#home").append("<h2> Your search returned "+ response.length+"  records.</h2>");
                  var data = response;
                  $.each(data, function(i,v){
-                     console.log(v);
-                     var clone = $(".listTemplate").clone();
-                     clone.find(".card-address").text(v.street_address);
-                     clone.find(".card-date").text(v.creation_date); 
-                     clone.find(".card-request").text(v.service_request_number); 
-                     clone.find(".card-location").text(v.where_is_the_graffiti_located_); 
-                     clone.find(".card-status").text(v.status); 
-                     clone.find(".card-surface").text(v.what_type_of_surface_is_the_graffiti_on_); 
-                     clone.find(".card-dateComplete").text(v.completion_date); 
-                     clone.removeClass("listTemplate");
-                     $("#cardsList").append(clone);
-                     var location={lat:parseFloat(v.latitude), lng:parseFloat(v.longitude)};
+                     //console.log(v);
+                     db.graffiti.put({address:v.street_address,
+                                     date:v.creation_date,
+                                     request:v.service_request_number,
+                                     location:v.where_is_the_graffiti_located_,
+                                     statusDB:v.status,
+                                                 surface:v.what_type_of_surface_is_the_graffiti_on_,
+                                      dateComplete:v.completion_date});
+                     var location={lat:parseFloat(v.latitude),                                                         lng:parseFloat(v.longitude)};
                      var  iconColor;
-                     if(v.status=="Open"){
-                         iconColor="grn-circle.png";
-                     }
-                     else{
-                         iconColor="red-circle.png";
-                     }
-                     var marker = new google.maps.Marker({
-                         position: location, 
-                         map: map,
-                         icon: iconColor
+                     var id;
+                     //console.log(db.graffiti.orderBy('id').last());
+                     db.graffiti.orderBy('id').last().then(function(result){
+                         result.id;
+                         var infowindow = new google.maps.InfoWindow({
+                             content: '<div id="content">'+
+                                        '<div id="siteNotice">'+
+                                        '</div>'+
+                                            '<h1 id="firstHeading"                                                               class="firstHeading">'                                                             +result.address+ 
+                                            '</h1>'+
+                                        '<div id="bodyContent">'+
+                                            '<p><b></b></p>'+
+                                        '</div>'+
+                                      '</div>'
+                         });
+                         var marker = new google.maps.Marker({
+                             position: location, 
+                             map: map,
+                             icon: iconColor
+                         });
+                         marker.set("id",result.id);
+                         marker.addListener('click', function() {
+                             var idM=marker.get("id");
+                             console.log("clicked on marker "+idM);
+                             infowindow.open(map, marker);
+                         });
                      });
+                     
+                     
                  });   
              });
+         });
+          $("body").on("click","#cardList",function(){
+             markerInfoWindow($(this).attr("data-id"));
          });
       });
         // register the service worker for offline use
@@ -199,11 +255,12 @@
           navigator.serviceWorker
                    .register('./sw.js')
                    .then(function() { 
-                          console.log("Service Worker Registered");                                     });
+                          console.log("Service Worker Registered");   
+                   });
         }
     </script>
     <script async defer
-    src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyCODaRYxz2gS1fniGC3JVDYQPh2ORVkXXU&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyCODaRYxz2gS1fniGC3JVDYQPh2ORVkXXU">
     </script>
   </body>
 </html>
