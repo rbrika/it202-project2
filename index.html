@@ -1,107 +1,127 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-	<meta charset="utf-8">
-    <meta charset="utf-8">
-    <link rel='manifest' href='./manifest.json'>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
 
-	<title>Graffiti Removal</title>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-	 crossorigin="anonymous">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
 
-     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-	<style>
-        #map {
-            height: 400px;  /* The height is 400 pixels */
-            width: 100%;  /* The width is the width of the web page */
-       }
-        .navbar{
-            background-color:grey;
-        }
-        .navbar-brand{
-            color:black;
-        }
-        .navbar-toggler-icon{
-            color:black;
-        }
-        .navbar-toggler{
-            color:black;
-        }
-        .nav-link{
-            color:black;
-        }
-		.content {
-			display: none;
-			margin: 1em;
-		}
-        .listTemplate {
-			display: none;
-		}
-        .detailedTemplate{
-            display: none;
-        }
-        #note{
-            height:200px;
-            font-size:14pt;
-        }
-        #responseForm{
-	        width: auto;
-            display: none;
-        }	
-        #cardDets #resp {
-              border-bottom: solid gray 2px;
-        }
-        #responseHeader{
-           display: none; 
-        }
+  <title>Graffiti Removal: Rime Brika</title>
+
+  <!-- Bootstrap Core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom Fonts -->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+  <link href="vendor/simple-line-icons/css/simple-line-icons.css" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link href="css/stylish-portfolio.min.css" rel="stylesheet">
+  
+   <!-- Include Dexie -->
+      <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>  
+    <style>
+        .listTemplate{display:none;}
         .Completed {color:red;}
         .Open {color: green;}
-	</style>
-     <!-- Include Dexie -->
-      <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+        #header{
+            background-color: coral;
+        }
+    </style>
 </head>
 
-<body>
-	<nav class="navbar navbar-light">
-		<a class="navbar-brand" href="#">Navbar</a>
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-    </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" href="#home">Home <span class="sr-only">(current)</span></a>
+<body id="page-top">
+
+  <!-- Navigation -->
+  <a class="menu-toggle rounded" href="#">
+    <i class="fas fa-bars"></i>
+  </a>
+  <nav id="sidebar-wrapper">
+    <ul class="sidebar-nav">
+      <li class="sidebar-brand">
+        <a class="js-scroll-trigger nav-main" href="#header">Graffiti Removal</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#list">List</a>
+      <li class="sidebar-nav-item">
+        <a class="js-scroll-trigger nav-link" href="#search">Search</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#detailed">Detail</a>
+      <li class="sidebar-nav-item">
+        <a class="js-scroll-trigger nav-link" href="#list">List</a>
+      </li>
+      <li class="sidebar-nav-item">
+        <a class="js-scroll-trigger nav-link" href="#map1">Map</a>
+      </li>
+      <li class="sidebar-nav-item">
+        <a class="js-scroll-trigger nav-about" href="#about">About</a>
       </li>
     </ul>
-  </div>
   </nav>
-  <div class="content" id="home">
-    <form id="filters">
-      <input type="text" id="ward" placeholder="Enter ward">
-      <br>
-      <select id="status">
-  <option value="">Choose a value..</option>
-  <option value="Open">Open</option>
-  <option value="Completed">Completed</option>
-        </select>
-        <br>
-    </form>
-      <button id="searchButton">Search</button>
-  </div>
-  <div class="content" id="list">
-    <div id ="cardsList">  </div>
-	<div id="cardList"class="card listTemplate" style="width: auto;" data-id="">
+
+  <!-- Header -->
+  <section class="content-section bg-primary " id="header">
+    <div class="container text-center my-auto">
+      <h1 class="mb-1">Graffiti Removal Request</h1>
+      <h3 class="mb-5">
+        <em>A Progressive Web App to search through Graffiti Removal Requests</em>
+      </h3>
+    </div>
+    <div class="overlay"></div>
+  </section>
+
+  <!-- About -->
+    
+  <section class="content-section bg-primary " id="about">
+    <div class="container text-center my-auto">
+      <h1 class="mb-1">Graffiti Removal App</h1>
+      <h3 class="mb-5">
+        <em>Developer: Rime Brika</em>
+      </h3>
+      <h3 >
+        <p><a href="https://rbrika.github.io/it202-project2/">GitHub Repo</a></p>
+      </h3>
+    </div>
+      
+    <div class="overlay"></div>
+  </section>  
+    
+  <!-- Call to Action -->
+  <section class="content-section bg-primary text-white" id="search">
+    <div class="container text-center">
+      <h2 class="mb-4">You can search for graffiti removal request by inserting a ward and status</h2>
+        <form>
+          <div class="form-group">
+              <label>Ward</label>
+                <input class="form-control" id="ward" placeholder="Enter a Ward number">
+          </div>
+          <div class="form-group">
+              <label for="sel1">Status List:</label>
+              <select class="form-control" id="status">
+                  <option value="">Select a status</option>
+                  <option value="Open">Open</option>
+                  <option value="Completed">Completed</option>
+              </select>
+          </div>  
+          <a href="#" class="btn btn-xl btn-dark" id="searchButton">Search</a>
+        </form>
+    </div>
+  </section>
+
+  <!-- List -->
+  <section class="content-section bg-primary text-white text-center" id="list">
+    <div class="container">
+      <div class="content-section-heading">
+        <h3 class="text-secondary mb-0" style="font-size:50px;">List</h3>
+        <p id="show" class="mb-5" style="font-size:42px;"></p>
+      </div>
+      <div class="row" id="cardsList">
+      </div>
+    </div>
+  </section>
+    <div id="cardList"class="card listTemplate col-lg-3 col-md-6 mb-5 mb-lg-0"  data-id="">
 		<div class="card-bodyList">
-			<h4 class="card-address">Card title</h4>
+			<h3 class="card-address mb-2 ">Card title</h3>
 			<h5 class="card-date mb-2 text-muted">Card date</h5>
             <h6 class="card-request mb-2 text-muted">Card date</h6>
             <h6 class="card-location mb-2 text-muted">Card date</h6>
@@ -110,35 +130,78 @@
             <h6 class="card-dateComplete mb-2 text-muted">Card date</h6>
 		</div>
 	</div>
-  </div>
-  <div class="content" id="detailed">
-    <div id="map"></div>
-  </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!-- Map -->
+  <section id="map1" class="map"></section>
+
+  <!-- Footer -->
+  <footer class="footer text-center">
+    <div class="container">
+      <ul class="list-inline mb-5">
+        <li class="list-inline-item">
+          <a class="social-link rounded-circle text-white mr-3" href="#">
+            <i class="icon-social-facebook"></i>
+          </a>
+        </li>
+        <li class="list-inline-item">
+          <a class="social-link rounded-circle text-white mr-3" href="#">
+            <i class="icon-social-twitter"></i>
+          </a>
+        </li>
+        <li class="list-inline-item">
+          <a class="social-link rounded-circle text-white" href="#">
+            <i class="icon-social-github"></i>
+          </a>
+        </li>
+      </ul>
+      <p class="text-muted small mb-0">Copyright &copy; Rime Brika Project 2 2019</p>
+    </div>
+  </footer>
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded js-scroll-trigger" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Plugin JavaScript -->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="js/stylish-portfolio.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
       
 
     <script>
       $(document).ready(function() {
-         var endpoint = "https://data.cityofchicago.org/resource/cdmx-wzbz.json?$limit=5";
+          
+          $("#map1").css("display", "none");
+             $("#search").css("display", "none");
+             $("#list").css("display", "none");
+          $("#about").css("display", "none");
+         var endpoint = "https://data.cityofchicago.org/resource/cdmx-wzbz.json?";
           
           var db = new Dexie("graffiti_database");
           db.version(1).stores({
               graffiti: '++id,address,date,request,location,statusDB,surface,dateComplete,lat,long'
           });
+          db.graffiti.clear();
             function loadCards(){
+                
                 db.graffiti.each(function(v){
                     var clone = $(".listTemplate").clone();
-                    console.log(v.street_address);
                      clone.find(".card-address").text(v.address);
-                     clone.find(".card-address").addClass(v.statusDB);
-                     clone.find(".card-date").text(v.date); 
-                     clone.find(".card-request").text(v.request); 
-                     clone.find(".card-location").text(v.location); 
-                     clone.find(".card-status").text(v.statusDB); 
-                     clone.find(".card-surface").text(v.surface); 
-                     clone.find(".card-dateComplete").text(v.dateComplete);
+                     clone.find(".card-date").text("Date Created: "+v.date); 
+                     clone.find(".card-request").text("Service Request Number: "+v.request); 
+                     clone.find(".card-location").text("Where the Graffiti is located: "+v.location); 
+                     clone.find(".card-status").text("Status: "+v.statusDB); 
+                     clone.find(".card-surface").text("What type of surface?: "+v.surface); 
+                     clone.find(".card-dateComplete").text("Completion Date: "+v.dateComplete);
                      clone.attr("data-id",v.id);
+                     clone.addClass(v.statusDB);
                      clone.removeClass("listTemplate");
                      $("#cardsList").append(clone);
                    
@@ -147,7 +210,7 @@
           }
           function addMarkers(){
               var chicago = {lat: 41.8781, lng: -87.6298};
-              var map = new google.maps.Map(document.getElementById('map'), {zoom: 12, center: chicago});
+              var map = new google.maps.Map(document.getElementById('map1'), {zoom: 12, center: chicago});
               db.graffiti.each(function(v){
                   var infowindow = new google.maps.InfoWindow({
                          content:
@@ -158,10 +221,13 @@
                                 +v.address+ 
                                 '</h1>'+
                                 '<div id="bodyContent">'+
-                                '<p><b></b></p>'+
+                                '<b>Date Created: '+v.date+'<br>Completion Date:'+v.dateComplete+
+                                '</b><br><br><b>Where the Graffiti is located: '+v.location+'</b><br><br><b>What type of surface?: '+v.surface+'</b>'+
+                                '<br><br><b>Status: '+v.statusDB+'</b><br><br><b>Service Request Number: '+v.request+'</b>'+
                                 '</div>'+
                           '</div>'
                   });
+                  
                   var iconColor;
                   var location = {lat: v.lat, lng: v.long};
                   if(v.statusDB=="Open"){
@@ -183,27 +249,47 @@
                          });
               });
           }
-         $("#home").show();
+         
          $(".nav-link").on("click", function(){
              hideScreens();
              console.log("clicked on nav content");
              var target = $(this).attr("href");
-             $(target).show();
+             $(target).css("display", "block");
              if(target=="#list"){
-                loadCards();
+                //loadCards();
                 }
-             if(target=="#detailed"){
-                 addMarkers();
+             if(target=="#map1"){
+                 console.log("Clicked on map");
+                 //addMarkers();
                 }
          });
-        
+          
+          $(".nav-about").on("click",function(){
+             hideScreens();
+             $("#about").css("display", "block");
+         });
+         $(".nav-main").on("click",function(){
+             db.graffiti.clear();
+             $("#cardsList").empty();
+             $("#map1").empty();
+             document.getElementById("show").innerHTML = "Showing 0 results:";
+             hideScreens();
+             console.log("clicked on Nav MEnu");
+             $("#header").css("display", "block");
+         });
          function hideScreens() {
-             $(".content").hide();
+             console.log("Hiding Screens");
+             $("#map1").css("display", "none");
+             $("#search").css("display", "none");
+             $("#list").css("display", "none");
+             $("#header").css("display", "none");
+             $("#about").css("display", "none");
+             
          }
          $("#searchButton").on("click", function(){
              db.graffiti.clear();
              $("#cardsList").empty();
-             $("#map").empty();  
+             $("#map1").empty();  
              var ward=$("#ward").val();
              var status=$("#status").val();
              var url=endpoint;
@@ -215,21 +301,30 @@
              }
              console.log(url);
              $.get(url,function(response){
-                 console.log(response.length);
                  var data = response;
+                 document.getElementById("show").innerHTML = "Showing "+response.length+" results:";
                  $.each(data, function(i,v){
+                     var completeDate;
+                     if(v.completion_date==null){
+                        completeDate="N/A"
+                        }
+                     else{
+                         completeDate=v.completion_date.split("T")[0];
+                     }
                      db.graffiti.put({
                          address:v.street_address,
-                         date:v.creation_date,
+                         date:v.creation_date.split("T")[0],
                          request:v.service_request_number,
                          location:v.where_is_the_graffiti_located_,
                          statusDB:v.status,
                          surface:v.what_type_of_surface_is_the_graffiti_on_,
-                         dateComplete:v.completion_date,
+                         dateComplete:completeDate,
                          lat:parseFloat(v.latitude),
                          long:parseFloat(v.longitude)
                      });                     
-                 });   
+                 });  
+                 loadCards();
+                 addMarkers();
              });
          });
       });
@@ -242,8 +337,7 @@
                    });
         }
     </script>
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyCODaRYxz2gS1fniGC3JVDYQPh2ORVkXXU">
+    <script async defer src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyCODaRYxz2gS1fniGC3JVDYQPh2ORVkXXU">
     </script>
-  </body>
+</body>
 </html>
