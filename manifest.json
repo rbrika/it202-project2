@@ -1,9 +1,9 @@
 {
-  "name": "Notes App",
-  "short_name": "Notes App",
+  "name": "Graffiti Removal App",
+  "short_name": "Graffiti Removal App",
   "icons": [ {
-        "src": "./Note.jpeg",
-        "type": "image/jpeg",
+        "src": "./paintRoller.png",
+        "type": "image/png",
         "sizes": "144x144"
       }],
   "start_url": "./index.html",

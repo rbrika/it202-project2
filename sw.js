@@ -17,7 +17,7 @@
 
 version = '1.1';
 
-let cacheName = 'pwaBasic_' + version;
+let cacheName = 'graffititRemoval_' + version;
 
 self.addEventListener('install', e => {
   let timeStamp = Date.now();
