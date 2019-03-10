@@ -28,7 +28,24 @@
         .Completed {color:red;}
         .Open {color: green;}
         #header{
-            background-color: coral;
+            background-color: #659DBD;
+            color: white;
+        }
+        #sidebar-wrapper{
+            background-color: #D1E8E2;
+        }
+        #list{
+            background-color: #C38D9D;
+            color: white;
+        }
+        #about{
+            background-color: #E7717D;
+            color: white;
+        }
+        .text-secondary{color: white;}
+        a{color: white;}
+        footer.footer .social-link {
+            background-color:#AFD275;
         }
     </style>
 </head>
@@ -64,7 +81,8 @@
     <div class="container text-center my-auto">
       <h1 class="mb-1">Graffiti Removal Request</h1>
       <h3 class="mb-5">
-        <em>A Progressive Web App to search through Graffiti Removal Requests</em>
+        <em>A Progressive Web App to search through Graffiti Removal Requests</em><br>
+          <em>Click on the nav bar icon to go to the search screen!</em>
       </h3>
     </div>
     <div class="overlay"></div>
@@ -76,10 +94,11 @@
     <div class="container text-center my-auto">
       <h1 class="mb-1">Graffiti Removal App</h1>
       <h3 class="mb-5">
-        <em>Developer: Rime Brika</em>
+        <em>Developer: Rime Brika</em><br>
+          <em>Bootstrap Template: Stylish Portfolio</em>
       </h3>
       <h3 >
-        <p><a href="https://rbrika.github.io/it202-project2/">GitHub Repo</a></p>
+        <p><a href="https://github.com/rbrika/it202-project2">GitHub Repo</a></p>
       </h3>
     </div>
       
@@ -137,18 +156,9 @@
   <footer class="footer text-center">
     <div class="container">
       <ul class="list-inline mb-5">
+       
         <li class="list-inline-item">
-          <a class="social-link rounded-circle text-white mr-3" href="#">
-            <i class="icon-social-facebook"></i>
-          </a>
-        </li>
-        <li class="list-inline-item">
-          <a class="social-link rounded-circle text-white mr-3" href="#">
-            <i class="icon-social-twitter"></i>
-          </a>
-        </li>
-        <li class="list-inline-item">
-          <a class="social-link rounded-circle text-white" href="#">
+          <a class="social-link rounded-circle text-white" href="https://github.com/rbrika/it202-project2">
             <i class="icon-social-github"></i>
           </a>
         </li>
@@ -176,8 +186,13 @@
       
 
     <script>
+        function initMap(){
+            var chicago = {lat: 41.8781, lng: -87.6298};
+            var map = new google.maps.Map(document.getElementById('map1'), {zoom: 12, center: chicago}); 
+        };
       $(document).ready(function() {
-          
+         
+        
           $("#map1").css("display", "none");
              $("#search").css("display", "none");
              $("#list").css("display", "none");
@@ -210,7 +225,7 @@
           }
           function addMarkers(){
               var chicago = {lat: 41.8781, lng: -87.6298};
-              var map = new google.maps.Map(document.getElementById('map1'), {zoom: 12, center: chicago});
+            var map = new google.maps.Map(document.getElementById('map1'), {zoom: 12, center: chicago}); 
               db.graffiti.each(function(v){
                   var infowindow = new google.maps.InfoWindow({
                          content:
@@ -236,17 +251,18 @@
                      else{
                          iconColor="red-circle.png";
                      }
-                         var marker = new google.maps.Marker({
+                  var marker = new google.maps.Marker({
                              position: location, 
                              map: map,
                              icon: iconColor
-                         });
-                         marker.set("id",v.id);
-                         marker.addListener('click', function() {
-                             var idM=marker.get("id");
-                             console.log("clicked on marker "+idM);
-                             infowindow.open(map, marker);
-                         });
+                  });
+                  console.log("added marker");
+                  marker.set("id",v.id);
+                  marker.addListener('click', function() {
+                      var idM=marker.get("id");
+                      console.log("clicked on marker "+idM);
+                      infowindow.open(map, marker);
+                  });
               });
           }
          
@@ -255,12 +271,9 @@
              console.log("clicked on nav content");
              var target = $(this).attr("href");
              $(target).css("display", "block");
-             if(target=="#list"){
-                //loadCards();
-                }
              if(target=="#map1"){
                  console.log("Clicked on map");
-                 //addMarkers();
+               
                 }
          });
           
@@ -337,7 +350,7 @@
                    });
         }
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyCODaRYxz2gS1fniGC3JVDYQPh2ORVkXXU">
+    <script async defer src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyCODaRYxz2gS1fniGC3JVDYQPh2ORVkXXU&callback=initMap">
     </script>
 </body>
 </html>
